@@ -30,7 +30,10 @@ def process_line(voice, line, filename):
 
 def process_file(path, outpath):
     # Check if dialog file needs recompilation, and recompile if necessary
-    outpath = os.path.abspath(outpath)
+    outpath = os.path.join(
+        os.path.abspath(outpath),
+        os.path.basename(path)
+    )
     if not os.path.exists(outpath):
         os.makedirs(outpath)
     print outpath

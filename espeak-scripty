@@ -16,8 +16,13 @@ def needs_compilation(path, outpath):
     return True
 
 def process_line(voice, line, filename):
+    print filename
+    if filename == '-':
+        filename = ''
+    else:
+        filename = '-w'+filename
     p = Popen(
-        ['espeak', '-v'+voice],
+        ['espeak', '-v'+voice, filename],
         stdin = PIPE, stdout=PIPE, stderr=STDOUT
     )
     print p.communicate(input=line)[0]
@@ -26,6 +31,8 @@ def process_line(voice, line, filename):
 def process_file(path, outpath):
     # Check if dialog file needs recompilation, and recompile if necessary
     outpath = os.path.abspath(outpath)
+    if not os.path.exists(outpath):
+        os.makedirs(outpath)
     print outpath
     if not needs_compilation(path, outpath):
         return
@@ -54,7 +61,7 @@ def process_file(path, outpath):
             voice = DEFAULT_VOICE
         filename = os.path.join(
             outpath, 
-            character + "." + str(indexes[character])
+            ".".join([character, str(indexes[character]), 'wav'])
         )
         indexes[character] += 1
         process_line(voice, line, filename)

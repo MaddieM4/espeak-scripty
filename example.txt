@@ -1,0 +1,5 @@
+BLACKSMITH = en+m1
+HILDA = en+f1
+
+HILDA: Don't die, daddy!
+BLACKSMITH: OH GOD NO! NO FIRE NO BAD!

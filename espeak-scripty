@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+
+import os
+import os.path
+import re
+from subprocess import Popen, PIPE, STDOUT
+import sys
+
+re_voicedef = re.compile('([A-Z0-9_-]+) *= *(.+)')
+re_linedef  = re.compile('([A-Z0-9_-]+) *: *(.+)')
+
+DEFAULT_VOICE = "en"
+
+def needs_compilation(path, outpath):
+    # Checks if timestamp for path is newer than timestamp for contents of outpath
+    return True
+
+def process_line(voice, line, filename):
+    p = Popen(
+        ['espeak', '-v'+voice],
+        stdin = PIPE, stdout=PIPE, stderr=STDOUT
+    )
+    print p.communicate(input=line)[0]
+    p.wait()
+
+def process_file(path, outpath):
+    # Check if dialog file needs recompilation, and recompile if necessary
+    outpath = os.path.abspath(outpath)
+    print outpath
+    if not needs_compilation(path, outpath):
+        return
+    filehandle = open(path)
+    voices = {}
+    indexes = {}
+    lines = []
+    for line in filehandle:
+        voicedef_match = re_voicedef.match(line)
+        if voicedef_match:
+            name  = voicedef_match.group(1)
+            value = voicedef_match.group(2)
+            voices[name] = value
+        else:
+            linedef_match = re_linedef.match(line)
+            if linedef_match:
+                name  = linedef_match.group(1)
+                value = linedef_match.group(2)
+                lines.append((name, value))
+    for character in voices:
+        indexes[character] = 0
+    for character, line in lines:
+        if character in voices:
+            voice = voices[character]
+        else:
+            voice = DEFAULT_VOICE
+        filename = os.path.join(
+            outpath, 
+            character + "." + str(indexes[character])
+        )
+        indexes[character] += 1
+        process_line(voice, line, filename)
+
+def process_dir(path, outpath):
+    # Recursively walk a directory calling process_file
+    pass
+
+if __name__=='__main__':
+    process_file('./example.txt', './example_output')

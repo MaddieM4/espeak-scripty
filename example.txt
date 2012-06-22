@@ -1,5 +1,12 @@
 BLACKSMITH = en+m1
 HILDA = en+f1
 
+# Lines that don't fit either the voice definition or line definition regex are
+# ignored entirely. When in doubt, start your lines with some sort of
+# punctuation (other than - and _), or lowercase letters.
+
+# To compile this file, assuming you're in the same directory:
+#     $ ./espeak_scripty example.txt example_output
+
 HILDA: Don't die, daddy!
 BLACKSMITH: OH GOD NO! NO FIRE NO BAD!

@@ -71,7 +71,24 @@ def process_file(path, outpath):
 
 def process_dir(path, outpath):
     # Recursively walk a directory calling process_file
-    pass
+    for entry in os.listdir(path):
+        process_dir_or_file(
+            os.path.join(path, entry),
+            os.path.join(outpath, entry),
+        )
+        
+
+def process_dir_or_file(path, outpath):
+    # Call the appropriate function based on the type of thing 'path'
+    # points to.
+    if os.path.isfile(path):
+        process_file(path, outpath)
+    else:
+        process_dir(path, outpath)
 
 if __name__=='__main__':
-    process_file('./example.txt', './example_output')
+    try:
+        command, input_path, output_path = sys.argv[:3]
+    except:
+        print >> sys.stderr, sys.argv[0]+": Wrong number of arguments."
+    process_dir_or_file(input_path, output_path)
